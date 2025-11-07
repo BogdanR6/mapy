@@ -1,0 +1,16 @@
+services:
+  web-frontend-dev:
+    build: ./frontend/web
+    container_name: mapy-web-frontend-dev
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/web:/usr/share/nginx/html
+  backend-dev: 
+    build: ./backend
+    container_name: mapy-backend-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
