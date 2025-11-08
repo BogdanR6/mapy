@@ -36,23 +36,25 @@ async function fetchJSON(url) {
 }
 
 async function main() {
-  zoom = 13
-  center = [51.505, -0.09]
-  urlTemplate = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-  attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-
-  var map = new Map(center, zoom)
-  map.aplyTileLayer(urlTemplate, 13, attribution)
+  const zoom = 13
+  const urlTemplate = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+  const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
   // Fetch coordinates from backend
-  const backendUrl = 'http://localhost:8000/api/locations';
-  const locations = await fetchJSON(backendUrl);
+  const backendUrl = CONFIG.BACKEND_URL;
+  const location = await fetchJSON(`${backendUrl}/connect`);
 
-  if (locations) {
-    // Hello World Test
-    console.log(locations)
-    console.log(locations.message)
-    map.addMarker(center, locations.message)
+  if (location) {
+    console.log(location)
+    markerCoordinates = [location.lat, location.lon]
+    var map = new Map(markerCoordinates, zoom)
+    map.aplyTileLayer(urlTemplate, 13, attribution)
+
+    map.addMarker(markerCoordinates)
+  } else {
+    console.log(location)
+    console.log("Could not connect to server!")
+    // TODO: Add a could not connect to server page
   }
 }
 main()

@@ -8,6 +8,8 @@ services:
       - ./frontend/web:/usr/share/nginx/html
   backend-dev: 
     build: ./backend
+    env_file:
+      - ./backend/.env
     container_name: mapy-backend-dev
     ports:
       - "8000:8000"
