@@ -42,7 +42,7 @@ async function main() {
 
   // Fetch coordinates from backend
   const backendUrl = CONFIG.BACKEND_URL;
-  const location = await fetchJSON(`${backendUrl}/connect`);
+  const location = await fetchJSON(`${backendUrl}/locations/connect`);
 
   if (location) {
     console.log(location)
@@ -50,7 +50,7 @@ async function main() {
     var map = new Map(markerCoordinates, zoom)
     map.aplyTileLayer(urlTemplate, 13, attribution)
 
-    map.addMarker(markerCoordinates)
+    map.addMarker(markerCoordinates, location.name)
   } else {
     console.log(location)
     console.log("Could not connect to server!")

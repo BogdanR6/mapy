@@ -1,14 +1,15 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import requests
-import os
+from app.core.config import APP_ENV, FRONTEND_URL
+from app.db.connection import init_db
+from app.api.routes_location import router as location_router
 
 app = FastAPI()
 
-# Only add CORS middleware in development
-APP_ENV = os.getenv("APP_ENV", "development")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8080")
+# Database setup
+init_db()
 
+# Middleware
 if APP_ENV == "development":
     app.add_middleware(
         CORSMiddleware,
@@ -18,22 +19,9 @@ if APP_ENV == "development":
         allow_headers=["*"],
     )
 
+# Routers
+app.include_router(location_router)
+
 @app.get("/")
 def root():
-    return {"message" : "Server Running"}
-
-@app.get("/connect")
-def record_connection(request: Request) -> dict[str, float | str | None]:
-    if os.getenv("APP_ENV") == "development":
-        ip = "8.8.8.8"
-    else:
-        ip = request.client.host
-
-    data = requests.get(f"http://ip-api.com/json/{ip}").json()
-    lat, lon = data.get("lat"), data.get("lon")
-    return {"ip": ip, "lat": lat, "lon": lon}
-
-@app.get("/points")
-def get_points():
-    # Should read from database
-    pass
+    return {"message": "Server Running"}
