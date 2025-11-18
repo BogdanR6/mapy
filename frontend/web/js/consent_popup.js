@@ -19,10 +19,10 @@ function showConsentPopup() {
   const popupFragment = template.content.cloneNode(true);
   document.body.appendChild(popupFragment);
 
-  // Now grab the actual inserted popup by selecting it from the DOM
   const popupEl = document.body.querySelector('#popup');
   const yesBtn = popupEl.querySelector('#yes-btn');
   const noBtn = popupEl.querySelector('#no-btn');
+  const closeBtn = popupEl.querySelector('#close-btn');
   const nameInput = popupEl.querySelector('#name-input');
 
   yesBtn.addEventListener('click', async () => {
@@ -32,6 +32,11 @@ function showConsentPopup() {
   });
 
   noBtn.addEventListener('click', async () => {
+    await sendConsent(false, null);
+    popupEl.remove();
+  });
+
+  closeBtn.addEventListener('click', async () => {
     await sendConsent(false, null);
     popupEl.remove();
   });

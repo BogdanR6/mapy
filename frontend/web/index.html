@@ -19,21 +19,19 @@
        <div id="map"></div>
     </main>
     <template id="consent-popup-template">
-      <div id="popup" style="
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px;
-        border: 2px solid #333;
-        z-index: 1000;
-      ">
-        <h3>Allow your location to be saved?</h3>
-        <input id="name-input" type="text" placeholder="Your name (optional)">
-        <div style="margin-top: 10px;">
-          <button id="yes-btn">Yes</button>
-          <button id="no-btn">No</button>
+      <div class="popup" id="popup">
+        <div class="popup-content">
+          <button class="close-btn" id="close-btn" aria-label="Close">&times;</button>
+
+          <h2>Allow your location to be saved?</h2>
+          <p>Your IP-based location was detected. You may optionally enter your name.</p>
+
+          <input class="name-input" id="name-input" type="text" placeholder="Your name (optional)">
+
+          <div class="popup-buttons">
+            <button class="yes-btn" id="yes-btn">Yes</button>
+            <button class="no-btn" id="no-btn">No</button>
+          </div>
         </div>
       </div>
     </template>
