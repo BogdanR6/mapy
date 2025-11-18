@@ -1,3 +1,23 @@
+async function fetchAllPoints() {
+  try {
+    const backendUrl = CONFIG.BACKEND_URL;
+    const response = await fetch(`${backendUrl}/locations/points`);
+
+    if (!response.ok) {
+      console.error("Failed to fetch points:", response.status);
+      return [];
+    }
+
+    const points = await response.json();
+    console.log("Fetched points:", points);
+
+    return points; // array of { id, name, lat, lon }
+  } catch (err) {
+    console.error("Error fetching points:", err);
+    return [];
+  }
+}
+
 async function connectToBackend() {
   try {
     const backendUrl = CONFIG.BACKEND_URL;
@@ -34,9 +54,16 @@ async function main() {
   map.addMarker(coordinates, location.name)
   console.log("User location marked")
 
+  console.log("Fetching existing points...");
+  const points = await fetchAllPoints();
+
+  for (const point of points) {
+    map.addMarker([point.lat, point.lon], point.name || "Unknown");
+  }
+  console.log("All DB points added to map");
+
   // ask the user to store the location
   console.log("Asking user consent...")
   showConsentPopup();
-  console.log("Finished main function")
 }
 main()
