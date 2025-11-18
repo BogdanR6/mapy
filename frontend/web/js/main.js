@@ -1,36 +1,12 @@
-class Map {
-  constructor(center, zoom) {
-    this.map = L.map('map').setView(center, zoom)
-  }
-
-  aplyTileLayer(urlTemplate, maxZoom, attribution) {
-    L.tileLayer(urlTemplate, {
-      maxZoom: maxZoom,
-      attribution: attribution
-    }).addTo(this.map);
-  }
-
-  addMarker(coordinates, popupText = null) {
-    var marker = L.marker(coordinates).addTo(this.map)
-
-    if (typeof popupText === 'string' || popupText instanceof String) {
-      marker.bindPopup(popupText)
-      marker.openPopup();
-    }
-  }
-}
-
-// Fetch helper
-async function fetchJSON(url) {
+async function connectToBackend() {
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
+    const backendUrl = CONFIG.BACKEND_URL;
+    const response = await fetch(`${backendUrl}/locations/connect`);
+    const location = await response.json();
+    console.log('Connected:', location);
+    return location;
   } catch (err) {
-    console.error("Fetch failed:", err);
+    console.error('Connection failed:', err);
     return null;
   }
 }
@@ -40,21 +16,27 @@ async function main() {
   const urlTemplate = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
   const attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
-  // Fetch coordinates from backend
-  const backendUrl = CONFIG.BACKEND_URL;
-  const location = await fetchJSON(`${backendUrl}/locations/connect`);
+  // connect to database
+  const location = await connectToBackend()
 
-  if (location) {
-    console.log(location)
-    markerCoordinates = [location.lat, location.lon]
-    var map = new Map(markerCoordinates, zoom)
-    map.aplyTileLayer(urlTemplate, 13, attribution)
-
-    map.addMarker(markerCoordinates, location.name)
-  } else {
-    console.log(location)
-    console.log("Could not connect to server!")
-    // TODO: Add a could not connect to server page
+  if (!location) {
+    return
   }
+
+  // create the map and add the location determined by the ip
+  console.log("Creating map...")
+  coordinates = [location.lat, location.lon]
+  var map = new Map(coordinates, zoom)
+  map.aplyTileLayer(urlTemplate, 13, attribution)
+  console.log("Map created")
+
+  console.log("Marking user location...")
+  map.addMarker(coordinates, location.name)
+  console.log("User location marked")
+
+  // ask the user to store the location
+  console.log("Asking user consent...")
+  showConsentPopup();
+  console.log("Finished main function")
 }
 main()

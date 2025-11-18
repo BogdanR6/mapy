@@ -18,7 +18,28 @@
     <main>
        <div id="map"></div>
     </main>
+    <template id="consent-popup-template">
+      <div id="popup" style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 2px solid #333;
+        z-index: 1000;
+      ">
+        <h3>Allow your location to be saved?</h3>
+        <input id="name-input" type="text" placeholder="Your name (optional)">
+        <div style="margin-top: 10px;">
+          <button id="yes-btn">Yes</button>
+          <button id="no-btn">No</button>
+        </div>
+      </div>
+    </template>
     <script src="js/config.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/consent_popup.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
